@@ -1,0 +1,130 @@
+version: "3.1"
+services:
+
+  postgres:
+    container_name: postgres
+    image: postgres
+    hostname: postgres
+    networks:
+      - default
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./zabbix/postgres:/var/lib/data
+    environment:
+      - POSTGRES_DB=zabbix
+      - POSTGRES_USER=zabbix
+      - POSTGRES_PASSWORD=SUASENHAAQUI
+
+  zabbix-server:
+    container_name: zabbix-server
+    image: zabbix/zabbix-server-pgsql
+    hostname: zabbix-server
+    networks:
+      - default
+    links:
+      - postgres
+    restart: always
+    ports:
+      - "10051:10051"
+    volumes:
+      - ./zabbix/alertscripts:/usr/lib/zabbix/alertscripts
+    environment:
+      - DB_SERVER_HOST=postgres
+      - POSTGRES_DB=zabbix
+      - POSTGRES_USER=zabbix
+      - POSTGRES_PASSWORD=SUASENHAAQUI
+    depends_on:
+      - postgres
+
+
+  zabbix-frontend:
+    container_name: zabbix-frontend
+    image: zabbix/zabbix-web-apache-pgsql
+    hostname: zabbix-frontend
+    networks:
+      - default
+    links:
+      - postgres
+    restart: always
+    expose:
+      - "8080"
+    ports:
+      - "80:8080"
+      - "443:8443"
+    environment:
+      - DB_SERVER_HOST=postgres
+      - POSTGRES_DB=zabbix
+      - POSTGRES_USER=zabbix
+      - POSTGRES_PASSWORD=SUASENHAAQUI
+      - PHP_TZ=America/Recife
+    depends_on:
+      - postgres
+
+   
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    hostname: grafana
+    networks:
+      - default
+    links:
+      - postgres
+      - zabbix-server
+    restart: always
+    ports:
+      - "3000:3000"
+    environment: 
+      - GF_INSTALL_PLUGINS=alexanderzobnin-zabbix-app
+    depends_on:
+      - postgres
+      - zabbix-server
+
+
+  zabbix-agent:
+    container_name: zabbix-agent
+    image: zabbix/zabbix-agent
+    hostname: zabbix-agent
+    user: root
+    networks:
+      - default
+    links:
+      - zabbix-server
+    restart: always
+    privileged: true
+    volumes:
+      - /var/run:/var/run
+    ports:
+      - "10050:10050"
+    environment:
+      - ZBX_HOSTNAME=Zabbix server
+      - ZBX_SERVER_HOST=172.18.1.1
+   
+
+  portainer:
+    image: portainer/portainer
+    hostname: portainer
+    container_name: portainer
+    networks:
+      - default
+    expose:
+      - "9000"
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data/portainer/portainer
+    restart: always
+
+
+networks:
+  default:
+    ipam:
+      config:
+
+        - subnet: 172.18.1.0/24
+
+
+volumes:
+  portainer_data:
+
