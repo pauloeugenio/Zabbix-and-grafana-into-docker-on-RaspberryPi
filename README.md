@@ -1,4 +1,4 @@
-# Zabbix com Docker Compose
+# Zabbix com Docker Compose no Raspberry Pi-2
 
 O arquivo docker-compose.yml que disponibilizamos em nosso Github, foi configurado de forma que o Docker crie 4 containers: zabbix-server, zabbix-frontend, grafana e Postgress. Foram utilizadas as imagens oficiais do Zabbix, do Grafana e do Postgress. Os links para consulta estão no final deste artigo. 
 
