@@ -1,1 +1,23 @@
+<!-- 
+1 Primeiro passo - Instalar o Docker no Rapberry pi 2
 
+Para isso devemos fazer download do script get-docker.sh com o seguinte comando:
+Curl -fsSL  https://get.docker.com -o get-docker.sh
+Após executar o download devemos iniciar o processo de instalação, para isso devemos digitar  o seguinte comando:
+sudo sh get-docker.sh 
+e aguardar a instalação completa do Docker.
+Feito a instalação, devemos configurar o nosso usuário para o Docker, através do comando:
+sudo usermod -aG Docker ${USER}
+Feito isso, basta verificarmos a versão do nosso Docker com o comando:
+Docker version
+2 Segundo passo - Instalar  o Docker-Compose, para isso usaremos o comando:
+Pip3 install docker-compose
+Após terminar a instalação, basta verificar se a mesma foi instalada com sucesso com o seguinte comando:
+Docker-compose version.
+
+3 Terceiro passo – instalar o Zabbix e o Grafana, para isso devemos baixar o repositório através do comando:
+git clone https://github.com/pauloeugenio/Zabbix-and-grafana-into-docker-on-RaspberryPi.git
+após baixar o arquivo, basta somente iniciar os containers através do Docker composse, lembrando que o arquivo, vai ter as configurações dos containers e antes de iniciar, é interessante executar as configurações.
+Para iniciar, basta digitar o comando:
+Sudo Docker up -d
+-->
